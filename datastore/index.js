@@ -6,20 +6,26 @@ const counter = require('./counter');
 var items = {};
 
 // Public API - Fix these CRUD functions ///////////////////////////////////////
-
+//create = POST
 exports.create = (text, callback) => {
+
   var id = counter.getNextUniqueId();
   items[id] = text;
   callback(null, { id, text });
 };
+// `/dataDir/${id}` , text.txt
+// fs.writeFile('mynewfile3.txt', 'Hello content!', function (err) {
+//   if (err) throw err;
+// });
 
+// readAll = GET all
 exports.readAll = (callback) => {
   var data = _.map(items, (text, id) => {
     return { id, text };
   });
   callback(null, data);
 };
-
+// readOne = GET one
 exports.readOne = (id, callback) => {
   var text = items[id];
   if (!text) {
@@ -28,7 +34,7 @@ exports.readOne = (id, callback) => {
     callback(null, { id, text });
   }
 };
-
+// update =  PUT/PATCH
 exports.update = (id, text, callback) => {
   var item = items[id];
   if (!item) {
@@ -38,7 +44,7 @@ exports.update = (id, text, callback) => {
     callback(null, { id, text });
   }
 };
-
+ //delete = DELETE
 exports.delete = (id, callback) => {
   var item = items[id];
   delete items[id];
@@ -53,7 +59,7 @@ exports.delete = (id, callback) => {
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
 
 exports.dataDir = path.join(__dirname, 'data');
-
+//                          __dirname/uniqueId, 'text'
 exports.initialize = () => {
   if (!fs.existsSync(exports.dataDir)) {
     fs.mkdirSync(exports.dataDir);
