@@ -48,11 +48,10 @@ const writeCounter = (count, callback) => {
 //it needs to return another function with an id so that it will be continuous so that the 
 //id's and text will stay stored.
 
-//getNextUniqueId takes a callback
 exports.getNextUniqueId = (callback) => {
   readCounter((err, result) => {
     writeCounter(result + 1, (err, uniqueId) => {
-    callback(err, uniqueId);
+      callback(err, uniqueId);
     });
   });
 };

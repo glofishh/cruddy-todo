@@ -8,14 +8,24 @@ var items = {};
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 //create = POST
 exports.create = (text, callback) => {
-
-  var id = counter.getNextUniqueId();
-  items[id] = text;
-  callback(null, { id, text });
+//                        ^ (err, result)
+  counter.getNextUniqueId((err, id) => {
+    var filePath = path.join(exports.dataDir, `${id}.txt`);
+    fs.writeFile(filePath, text, (err) => {
+      if(err) { 
+        callback(err);
+      } else {
+        callback(null, { id: id, text: text });
+      }
+    });
+  });
 };
+  
+// (path.join(todos.dataDir, `${todo.id}.txt`))
 // `/dataDir/${id}` , text.txt
 // fs.writeFile('mynewfile3.txt', 'Hello content!', function (err) {
-//   if (err) throw err;
+//              ^ filepath          ^text of content    ^ function if err
+//                                                        if (err) throw err;
 // });
 
 // readAll = GET all
@@ -25,15 +35,20 @@ exports.readAll = (callback) => {
   });
   callback(null, data);
 };
+
 // readOne = GET one
+//
 exports.readOne = (id, callback) => {
-  var text = items[id];
-  if (!text) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback(null, { id, text });
-  }
+  var filePath = path.join(exports.dataDir, `${id}.txt`);
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      callback(err);
+    } else {
+      callback(null, {id: id, text: data.toString()});
+    }
+  });
 };
+
 // update =  PUT/PATCH
 exports.update = (id, text, callback) => {
   var item = items[id];
@@ -44,7 +59,7 @@ exports.update = (id, text, callback) => {
     callback(null, { id, text });
   }
 };
- //delete = DELETE
+//delete = DELETE
 exports.delete = (id, callback) => {
   var item = items[id];
   delete items[id];
